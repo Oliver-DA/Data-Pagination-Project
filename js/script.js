@@ -3,114 +3,40 @@ Treehouse Techdegree:
 FSJS Project 2 - Data Pagination and Filtering
 */
 
-/*
-For assistance:
-   Check out the "Project Resources" section of the Instructions tab: https://teamtreehouse.com/projects/data-pagination-and-filtering#instructions
-   Reach out in your Slack community: https://treehouse-fsjs-102.slack.com/app_redirect?channel=unit-2
-*/
 
-
-/*
-Create the `showPage` function
-This function will create and insert/append the elements needed to display a "page" of nine students
-*/
-
+//Creating and inserting the searchBar component.
 const header = document.querySelector(".header");
+
 const searchBar = `<label for="search" class="student-search">
 <input id="search" placeholder="Search by name...">
 <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
 </label>`;
+
 header.insertAdjacentHTML("beforeend",searchBar);
 
+//Main constans to work through the program.
 const searchParent = header.lastElementChild;
 const triggerSearch = searchParent.querySelector("button");
 const searchInput = searchParent.firstElementChild;
+const studentList = document.querySelector(".student-list");
+const links = document.querySelector(".link-list");
 
-function searchFn(search,data){
-   const newData = [];
-
-   for ( let student of data){
-      let studentName = student.name.first.toLowerCase()+" "+ student.name.last.toLowerCase();
-
-      if ( search.length > 0 && studentName.includes(search.toLowerCase().trim(" "))){
-         newData.push(student);
-      }
-   }
-
-   return newData;
+//Clears up an html element.
+function cleanHtml (element) {
+   return element.innerHTML = "";
 }
 
-
-triggerSearch.addEventListener("click", () => {
-   const filteredStutends = searchFn(searchInput.value,data);
-
-   if(searchInput.value.length == 0 ){
-      showPage(data,1);
-      addPagination(data);
-      return
-   }
-   else if(filteredStutends.length == 0){
-      const ul = document.querySelector(".student-list");
-      const links = document.querySelector(".link-list");
-      links.innerHTML = "";
-      ul.innerHTML = "";
-      ul.textContent = "No matches were found :(";
-      return
-   }
-
-   let totalPages = filteredStutends.length / 9;
-   showPage(filteredStutends,totalPages);
-   addPagination(filteredStutends);
-});
-
-searchInput.addEventListener('keyup',() => {
-   const filteredStutends = searchFn(searchInput.value,data);
-
-   if(searchInput.value.length == 0 ){
-      showPage(data,1);
-      addPagination(data);
-      return
-   }
-   else if(filteredStutends.length == 0){
-      const ul = document.querySelector(".student-list");
-      const links = document.querySelector(".link-list");
-      links.innerHTML = "";
-      ul.innerHTML = "";
-      ul.textContent = "No matches were found :(";
-      return
-   }
-
-   let totalPages = filteredStutends.length / 9;
-   showPage(filteredStutends,totalPages);
-   addPagination(filteredStutends);
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//showPage takes a list(Array) as argument and an amount of pages(Number) to display them on. (9 per page).
 function showPage (list,page) {
    const startIndex = ( page * 9 ) - 9;
    const endIndex = ( page * 9 );
-   const studentList = document.querySelector(".student-list");
-   studentList.innerHTML = "";
 
-   for ( let i = 0; i < list.length; i++){
+   cleanHtml(studentList);
 
-      if( i >= startIndex && i < endIndex ){
+   //loops trought the list and inserts student on the page until endIndex is reached.
+   for ( let i = 0; i < list.length; i++) {
+
+      if ( i >= startIndex && i < endIndex ) {
          let student = list[i];
 
          let html = `
@@ -130,12 +56,16 @@ function showPage (list,page) {
    }
 }
 
+//addPagination function takes a list(Array) as argument and calculates how many pagination button will be displayed.
 function addPagination (list) {
+
    const totalPages = Math.ceil( list.length / 9 );
    const paginationLinks = document.querySelector(".link-list");
-   paginationLinks.innerHTML = "";
 
-   for ( let i = 1; i <= totalPages; i++){
+   cleanHtml(paginationLinks);
+
+   //Creates and inserts pagination buttons according to the totalPages's value.
+   for ( let i = 1; i <= totalPages; i++) {
       let link = `<li><button type="button">${i}</button></li>`;
       paginationLinks.insertAdjacentHTML("beforeend",link);
    }
@@ -147,7 +77,7 @@ function addPagination (list) {
 
       const target = e.target;
 
-      if(target.tagName === "BUTTON"){
+      if (target.tagName === "BUTTON") {
 
          //Sets the last clicked pagination button with the className 'active' to an empty string.
          paginationLinks.querySelector(".active").className = "";
@@ -161,5 +91,65 @@ function addPagination (list) {
    });
 }
 
+//Calling showPage to display students and addPagination to display paginationButtons.
 showPage(data,1);
 addPagination(data);
+
+
+//Takes the array of students and filters those who matched the search(String) argument,then returns them.
+function searchFn (search,data) {
+   const newData = [];
+
+   for ( let student of data) {
+      let studentName = student.name.first.toLowerCase()+" "+ student.name.last.toLowerCase();
+
+      if ( search.length > 0 && studentName.includes( search.toLowerCase().trim("") ) ) {
+         newData.push(student);
+      }
+   }
+
+   return newData;
+}
+
+//Controls the search's bar behaviour quer(String) students(Filtered Array of students).
+function searchControl (query,students) {
+
+   //if no input provided to search for students return the main page.
+   if (query.length == 0 ) {
+      showPage(data,1);
+      addPagination(data);
+      return
+   }
+
+   //if the input provided did not match any filtered students.
+   else if (students.length == 0) {
+
+      //clean the current list of students and paginationButtons to insert a NOT FOUND message.
+      cleanHtml(links);
+      cleanHtml(studentList);
+      studentList.textContent = "No matches were found :(";
+      
+      return
+   }
+
+   //Defining the number of student tha will be displayed per page.
+   let totalPages = students.length / 9;
+
+   //passing them as arguments to the showPage and addPagination functions.
+   showPage(students,totalPages);
+   addPagination(students);
+
+   return;
+}
+
+//Event Handlers
+triggerSearch.addEventListener("click", () => {
+   const filteredStutends = searchFn(searchInput.value,data);
+   searchControl(searchInput.value,filteredStutends)
+});
+
+searchInput.addEventListener('keyup',() => {
+   const filteredStutends = searchFn(searchInput.value,data);
+   searchControl(searchInput.value,filteredStutends)
+});
+
