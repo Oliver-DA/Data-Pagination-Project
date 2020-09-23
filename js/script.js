@@ -14,6 +14,94 @@ For assistance:
 Create the `showPage` function
 This function will create and insert/append the elements needed to display a "page" of nine students
 */
+
+const header = document.querySelector(".header");
+const searchBar = `<label for="search" class="student-search">
+<input id="search" placeholder="Search by name...">
+<button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+</label>`;
+header.insertAdjacentHTML("beforeend",searchBar);
+
+const searchParent = header.lastElementChild;
+const triggerSearch = searchParent.querySelector("button");
+const searchInput = searchParent.firstElementChild;
+
+function searchFn(search,data){
+   const newData = [];
+
+   for ( let student of data){
+      let studentName = student.name.first.toLowerCase()+" "+ student.name.last.toLowerCase();
+
+      if ( search.length > 0 && studentName.includes(search.toLowerCase().trim(" "))){
+         newData.push(student);
+      }
+   }
+
+   return newData;
+}
+
+
+triggerSearch.addEventListener("click", () => {
+   const filteredStutends = searchFn(searchInput.value,data);
+
+   if(searchInput.value.length == 0 ){
+      showPage(data,1);
+      addPagination(data);
+      return
+   }
+   else if(filteredStutends.length == 0){
+      const ul = document.querySelector(".student-list");
+      const links = document.querySelector(".link-list");
+      links.innerHTML = "";
+      ul.innerHTML = "";
+      ul.textContent = "No matches were found :(";
+      return
+   }
+
+   let totalPages = filteredStutends.length / 9;
+   showPage(filteredStutends,totalPages);
+   addPagination(filteredStutends);
+});
+
+searchInput.addEventListener('keyup',() => {
+   const filteredStutends = searchFn(searchInput.value,data);
+
+   if(searchInput.value.length == 0 ){
+      showPage(data,1);
+      addPagination(data);
+      return
+   }
+   else if(filteredStutends.length == 0){
+      const ul = document.querySelector(".student-list");
+      const links = document.querySelector(".link-list");
+      links.innerHTML = "";
+      ul.innerHTML = "";
+      ul.textContent = "No matches were found :(";
+      return
+   }
+
+   let totalPages = filteredStutends.length / 9;
+   showPage(filteredStutends,totalPages);
+   addPagination(filteredStutends);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function showPage (list,page) {
    const startIndex = ( page * 9 ) - 9;
    const endIndex = ( page * 9 );
@@ -75,12 +163,3 @@ function addPagination (list) {
 
 showPage(data,1);
 addPagination(data);
-
-/*
-Create the `addPagination` function
-This function will create and insert/append the elements needed for the pagination buttons
-*/
-
-
-
-// Call functions
