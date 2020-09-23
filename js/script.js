@@ -6,11 +6,7 @@ FSJS Project 2 - Data Pagination and Filtering
 
 //Creating and inserting the searchBar component.
 const header = document.querySelector(".header");
-
-const searchBar = `<label for="search" class="student-search">
-<input id="search" placeholder="Search by name...">
-<button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
-</label>`;
+const searchBar = createSearchBar();
 
 header.insertAdjacentHTML("beforeend",searchBar);
 
@@ -19,11 +15,18 @@ const searchParent = header.lastElementChild;
 const triggerSearch = searchParent.querySelector("button");
 const searchInput = searchParent.firstElementChild;
 const studentList = document.querySelector(".student-list");
-const links = document.querySelector(".link-list");
+const paginationLinks = document.querySelector(".link-list");
 
 //Clears up an html element.
 function cleanHtml (element) {
    return element.innerHTML = "";
+}
+
+function createSearchBar () {
+   return `<label for="search" class="student-search">
+   <input id="search" placeholder="Search by name...">
+   <button type="button"><img src="img/icn-search.svg" alt="Search icon"></button>
+   </label>`;   
 }
 
 //showPage takes a list(Array) as argument and an amount of pages(Number) to display them on. (9 per page).
@@ -60,7 +63,6 @@ function showPage (list,page) {
 function addPagination (list) {
 
    const totalPages = Math.ceil( list.length / 9 );
-   const paginationLinks = document.querySelector(".link-list");
 
    cleanHtml(paginationLinks);
 
@@ -125,7 +127,7 @@ function searchControl (query,students) {
    else if (students.length == 0) {
 
       //clean the current list of students and paginationButtons to insert a NOT FOUND message.
-      cleanHtml(links);
+      cleanHtml(paginationLinks);
       cleanHtml(studentList);
       studentList.textContent = "No matches were found :(";
       
