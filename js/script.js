@@ -129,7 +129,7 @@ function searchControl (query,students) {
       //clean the current list of students and paginationButtons to insert a NOT FOUND message.
       cleanHtml(paginationLinks);
       cleanHtml(studentList);
-      studentList.textContent = "No matches were found :(";
+      studentList.textContent = "No matchs were found :(";
       
       return
    }
